@@ -11,14 +11,13 @@ const {
 } = require("../utils/index");
 
 const { sendMail } = require("../services/mailService");
-
 const moment = require("moment");
 const User = db.users;
 const verifyEmail = db.verifyemail;
 
 const setUser = asyncHandler(async (data) => {
   const { firstname, lastname, email, password } = data;
-
+  console.log({ data });
   try {
     const emailExist = await User.findOne({
       raw: true,
@@ -42,14 +41,19 @@ const setUser = asyncHandler(async (data) => {
     };
 
     const userCreated = await User.create(info);
-
+    console.log(userCreated.dataValues.userid);
     if (userCreated) {
-      const token = generateToken(email, userCreated.userid);
-
+      const token = generateToken(
+        email,
+        userCreated.dataValues.userid.toString()
+      );
+      console.log("token", token);
       const result = {
         email: email,
-        token: token,
+        token,
       };
+
+      console.log(result);
 
       const emailOtp = generateOTP();
 
@@ -63,8 +67,10 @@ const setUser = asyncHandler(async (data) => {
         modified: dateTime,
       });
 
+      const userid = userCreated.dataValues.userid;
       if (newEmailVerify) {
-        let message = `Please use the OTP code: <h2>${emailOtp.otp}</h2> to verify your email address.`;
+      
+        let message = `Please use the OTP code: <a href="${process.env.BACKEND_URL}/users/verify/${userid}/${newEmailVerify.otp}">Verification link</a> to verify your email address.`;
         const emailSubject = "TyVideos";
         sendMail(email, emailSubject, message);
         return result;
@@ -85,25 +91,42 @@ const verifyUser = asyncHandler(async (data) => {
   });
 
   const dateTime = moment().format();
+
+  const userExist = await User.findOne({
+    raw: true,
+    attributes: ["userid", "isverified"],
+    where: { userid: userId },
+  });
+console.log("rarara")
   if (!getVerifyOtp) {
     throw ResponseMsg.ERROR.USER_OTP_INVALID;
   } else if (getVerifyOtp.expireat >= dateTime) {
     const emailOtp = generateOTP();
 
     await getVerifyOtp.update({
-      otp: emailOtp,
+      otp: emailOtp.otp,
       expireat: emailOtp.expireAt,
-      isverified: "verified",
       isvalid: false,
     });
 
-    let message = `Please use the OTP code: <h2>${emailOtp.otp}</h2> to verify your email address.`;
+    await userExist.update({
+      isverified: "verified",
+    });
+
+    let message = `Please use the OTP code: <a href="${process.env.BACKEND_URL}/users/verify/${userId}/${emailOtp.otp}">Verification link</a> to verify your email address.`;
     const emailSubject = "TyVideos";
     sendMail(email, emailSubject, message);
     throw ResponseMsg.ERROR.RESENT_OTP;
   } else {
-    getVerifyOtp.update({
-      isverified: "verified",
+    console.log("herererr");
+    console.log(userExist);
+    const updateUser = await User.update(
+      {
+        isverified: "verified",
+      },
+      { where: { userid: userId } }
+    );
+    const updateOtp = await getVerifyOtp.update({
       isvalid: false,
       expiredat: dateTime,
     });
@@ -117,18 +140,48 @@ const userLogin = asyncHandler(async (data) => {
     const { email, password } = data;
     const userExists = await User.findOne({
       raw: true,
+      attributes: ["userid", "isverified", "password", "email"],
       where: { email: email },
     });
+ 
     if (userExists) {
       if (userExists.isverified === "unverified") {
-        throw ResponseMsg.ERROR.UNVERIFIED_USER;
+        const getVerifyOtp = await verifyEmail.findOne({
+          raw: true,
+          where: { userid: userExists.userid },
+        });
+
+        const dateNow = moment().format();
+      
+        if (getVerifyOtp.expireat >= dateNow) {
+         
+          const emailOtp = generateOTP();
+
+          await getVerifyOtp.update({
+            otp: emailOtp.otp,
+            expireat: emailOtp.expireAt,
+            isvalid: true,
+          });
+
+  
+
+          let message = `Please use the OTP code: <a href="${process.env.BACKEND_URL}/users/verify/${userExists.userid}/${emailOtp.otp}">Verification link</a> to verify your email address.`;
+          const emailSubject = "TyVideos";
+          sendMail(email, emailSubject, message);
+          throw ResponseMsg.ERROR.UNVERIFIED_USER;
+        } else {
+          let message = `Please use the OTP code: <a href="${process.env.BACKEND_URL}/users/verify/${userExists.userid}/${getVerifyOtp.otp}">Verification link</a> to verify your email address.`;
+          const emailSubject = "TyVideos";
+          sendMail(email, emailSubject, message);
+
+          throw ResponseMsg.ERROR.UNVERIFIED_USER;
+        }
       }
       if (comparePassword(password, userExists.password)) {
-        const token = generateToken(email, userExists.userid);
+        const token = generateToken(email, userExists.userid.toString());
         return {
-          firstname: userExists.firstname,
-          lastname: userExists.lastname,
           email: userExists.email,
+          userId:userExists.userid,
           token,
         };
       } else {

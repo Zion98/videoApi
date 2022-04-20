@@ -45,18 +45,22 @@ const createUser = asyncHandler(async (req, res) => {
 });
 
 const verifyUserT = asyncHandler(async (req, res) => {
+  console.log("fjjfjf", req.params);
   try {
-    if (req.body.hasOwnProperty("otp")) {
-      const otp = req.body.otp;
-      if (otp.length !== 6) {
+    if (
+      req.params.hasOwnProperty("userid") &&
+      req.params.hasOwnProperty("otp")
+    ) {
+      if (req.params.otp.length !== 6) {
         throw errorResponse(res, ResponseMsg.ERROR.USER_OTP_INVALID, 400);
       } else {
         const data = {
-          otp: req.body.otp,
-          userId: req.user,
+          otp: req.params.otp,
+          userId: req.params.userid,
         };
         const result = await verifyUser(data);
-        return successResponse(res, ResponseMsg.SUCCESS.USER_VERIFIED, result);
+        res.redirect(`${process.env.FRONTEND_URL}/verified`);
+        // return successResponse(res, ResponseMsg.SUCCESS.USER_VERIFIED, result);
       }
     }
   } catch (error) {

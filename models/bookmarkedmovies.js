@@ -1,23 +1,22 @@
 module.exports = (sequelize, Sequelize) => {
   const bookmarkedMovies = sequelize.define("bookmarkedmovies", {
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
     },
     userid: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+      type: Sequelize.UUID,
       references: {
         model: "users",
         key: "userid",
       },
     },
     moviesid: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
+      type: Sequelize.UUID,
       references: {
+        
         model: "movies",
         key: "moviesid",
       },
@@ -25,19 +24,21 @@ module.exports = (sequelize, Sequelize) => {
     created: {
       type: Sequelize.DATE,
       allowNull: false,
-      defaultValue: sequelize.fn("current_timestamp"),
+      defaultValue: Sequelize.NOW,
     },
   });
-  // bookmarkedMovies.associate = function (models) {
-  //   // bookmarkedMovies.belongsTo(models.users, {
-  //   //   as: "Users",
-  //   //   foreignKey: "userid",
-  //   // });
-  //   // bookmarkedMovies.belongsTo(models.movies, {
-  //   //   as: "Movies",
-  //   //   foreignKey: "moviesid",
-  //   // });
-  // };
+
+
+  bookmarkedMovies.associate = function (models) {
+    bookmarkedMovies.belongsTo(models.movies, {
+      foreignKey: "moviesid",
+      constraints: false
+    });
+
+  }
+  bookmarkedMovies
+    .sync({ alter: true })
+    .then(() => console.log("Bookmarked Movies's Table Sync complete"));
 
   return bookmarkedMovies;
 };

@@ -1,18 +1,20 @@
+const replaceEnum = require("sequelize-replace-enum-postgres").default;
+
 module.exports = (sequelize, Sequelize) => {
   const verifyemail = sequelize.define("verifyemail", {
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
-      autoIncrement: true,
+      // autoIncrement: true,
     },
     userid: {
-      type: Sequelize.CHAR(9),
+      type: Sequelize.UUID,
       allowNull: false,
       references: {
         model: "users",
-        key: "userId",
+        key: "userid",
       },
       unique: true,
     },
@@ -31,21 +33,26 @@ module.exports = (sequelize, Sequelize) => {
     expiredat: {
       type: Sequelize.DATE(),
     },
-    isverified: {
-      type: Sequelize.ENUM("verified", "unverified"),
-      allowNull: false,
-      defaultValue: "unverified",
-    },
+
+    // isverified: {
+    //   type: Sequelize.ENUM("verified", "unverified"),
+    //   defaultValue: "unverified",
+    // },
     created: {
       type: Sequelize.DATE,
       allowNull: false,
-      defaultValue: sequelize.fn("current_timestamp"),
+      defaultValue: Sequelize.NOW,
     },
     modified: {
       type: Sequelize.DATE,
       allowNull: false,
-      defaultValue: sequelize.fn("current_timestamp"),
+      defaultValue: Sequelize.NOW,
     },
   });
+
+  verifyemail
+    .sync({ alter: true })
+    .then(() => console.log("Verify Email Table Sync complete"));
+
   return verifyemail;
 };

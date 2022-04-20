@@ -39,7 +39,7 @@ const setMovie = asyncHandler(async (data) => {
 const fetchAllMovies = asyncHandler(async (data) => {
   const { userId } = data;
 
-  console.log(data);
+  console.log("reversaler");
 
   try {
     const getMovies = await moviesDB.findAll({
@@ -48,6 +48,7 @@ const fetchAllMovies = asyncHandler(async (data) => {
           model: bookmarkedMovies,
           as: "bookmarkedMovies",
           where: {
+            // moviesid:
             userid: userId,
           },
           required: false,
@@ -56,7 +57,7 @@ const fetchAllMovies = asyncHandler(async (data) => {
     });
 
     for (let index in getMovies) {
-      if (getMovies[index].dataValues.bookmarkedMovies == null) {
+      if (getMovies[index].dataValues.bookmarkedMovies.length<=0) {
         getMovies[index].dataValues.bookmarkedMovies = false;
       } else {
         getMovies[index].dataValues.bookmarkedMovies = true;
@@ -80,12 +81,10 @@ const setBookmarkedMovies = asyncHandler(async (data) => {
     });
 
     if (getMovies) {
-      await getMovies.destroy({
-        where: {
-          moviesid: moviesId,
-        },
-      });
-      return successResponse(res, ResponseMsg.SUCCESS.MOVIE_UNBOOKMARKED, 200);
+      await getMovies.destroy();
+      console.log("DESTROY")
+      return ResponseMsg.SUCCESS.MOVIE_UNBOOKMARKED
+
     } else {
       const dateTime = moment().format();
       const bookmarkedMovie = await bookmarkedMovies.create({
@@ -93,7 +92,7 @@ const setBookmarkedMovies = asyncHandler(async (data) => {
         moviesid: moviesId,
         created: dateTime,
       });
-      console.log(bookmarkedMovie);
+      // console.log(bookmarkedMovie);
       return bookmarkedMovie;
     }
   } catch (error) {
@@ -102,7 +101,7 @@ const setBookmarkedMovies = asyncHandler(async (data) => {
 });
 const fetchBookmarkedMovies = asyncHandler(async (data) => {
   const { userId } = data;
-
+console.log("mammothers")
   try {
     const getMovies = await moviesDB.findAll({
       include: [
@@ -196,3 +195,26 @@ module.exports = {
   fetchBookmarkedMovies,
   fetchBookmarkedSeries,
 };
+
+
+// https://res.cloudinary.com/zion1/image/upload/v1650318492/file-upload/tmp-1-1650318484092_nqfut0.svg
+
+
+
+//BLACK PANTHER
+//https://res.cloudinary.com/zion1/image/upload/v1650348876/file-upload/tmp-1-1650348872701_wyccva.webp
+
+//BLACK WIDOW
+// "https://res.cloudinary.com/zion1/image/upload/v1650348965/file-upload/tmp-1-1650348961629_atped4.jpg"
+
+//DOCTOR STRANGE
+//https://res.cloudinary.com/zion1/image/upload/v1650348995/file-upload/tmp-2-1650348994114_ohjbcx.jpg"
+  
+//GUARDIANS OF THE ......
+// "https://res.cloudinary.com/zion1/image/upload/v1650349044/file-upload/tmp-1-1650349031671_bhy2ht.jpg"
+
+// AVENGERS
+// "https://res.cloudinary.com/zion1/image/upload/v1650349076/file-upload/tmp-1-1650349074130_dtvjma.jpg"
+
+//CAPTAIN MARVEL
+//"https://res.cloudinary.com/zion1/image/upload/v1650349106/file-upload/tmp-1-1650349104242_zifpyb.jpg"

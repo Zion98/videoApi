@@ -53,6 +53,10 @@ const previousMonth = () => {
 };
 
 const generateToken = (email,userId) => {
+
+  console.log({email,userId})
+  console.log(process.env.JWT_SECRET)
+  console.log(process.env.VIDEO_ISSUER);
   return jwt.sign({ email, userId}, process.env.JWT_SECRET, {
     expiresIn: "18000s",
     issuer: process.env.VIDEO_ISSUER,

@@ -14,6 +14,8 @@ const userAuth = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
       jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+     
+      
         if (err) {
           throw err;
         } else if (

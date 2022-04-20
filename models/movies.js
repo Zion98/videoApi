@@ -1,47 +1,48 @@
 module.exports = (sequelize, Sequelize) => {
   const Movies = sequelize.define("movies", {
     moviesid: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
     },
     title: {
-      type: Sequelize.STRING(256),
+      type: Sequelize.STRING,
       allowNull: false,
     },
     year: {
-      type: Sequelize.STRING(6),
+      type: Sequelize.STRING,
       allowNull: false,
     },
     movie_img: {
-      type: Sequelize.STRING(256),
+      type: Sequelize.STRING,
       allowNull: true,
     },
     movie_link: {
-      type: Sequelize.STRING(20),
+      type: Sequelize.STRING,
       allowNull: true,
+      unique:true
     },
     created: {
       type: Sequelize.DATE,
       allowNull: false,
-      defaultValue: sequelize.fn("current_timestamp"),
+      defaultValue: Sequelize.NOW,
     },
   });
+
+  Movies.sync({ alter: true }).then(
+    () => console.log("Movies's Table Sync complete")
+  );
+
   Movies.associate = function (models) {
-    Movies.belongsTo(models.bookmarkedmovies, {
+    Movies.hasMany(models.bookmarkedmovies, {
       as: "bookmarkedMovies",
       foreignKey: "moviesid",
+      constraints: false
     });
 
-    // Movies.belongsToMany(models.users, {
-    //   through:models.bookmarkedmovies,
-    // //   onUpdate: 'CASCADE',
-    // //   onDelete: 'CASCADE'
-    //   foreignKey: "moviesid",
-    // // //   sourceKey: "id",
-    //   as: 'movies'
-    // });
-  };
+  }
+
+    
   return Movies;
 };

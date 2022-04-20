@@ -4,6 +4,7 @@ CREATE TABLE users (
   lastname VARCHAR(255) NOT NULL,
   email VARCHAR(225) NOT NULL UNIQUE,
   password VARCHAR(100),
+  isVerified isVerifiedEnum NOT NULL DEFAULT 'unverified',
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -17,7 +18,7 @@ CREATE TABLE verifyemail (
   expireAt TIMESTAMP,
   isValid BOOLEAN NOT NULL,
   expiredAt TIMESTAMP NULL,
-  isVerified isVerifiedEnum NOT NULL DEFAULT 'unverified',
+
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(userID) REFERENCES users(userID) ON DELETE CASCADE ON UPDATE CASCADE
@@ -107,3 +108,53 @@ CREATE TABLE IF NOT EXISTS bookmarkedSeries (
 -- // FROM CUSTOMERS
 -- // RIGHT JOIN ORDERS
 -- // ON CUSTOMERS.ID = ORDERS.CUSTOMER_ID;
+
+
+  -- // isverified: {
+  --   //   // type: Sequelize.ENUM,
+  --   //   // values: [
+  --   //   //   "verified", "unverified"
+  --   //   // ],
+  --   //   type: Sequelize.ENUM("verified", "unverified"),
+  --   //   allowNull: false,
+  --   //   defaultValue: "unverified",
+  --   // },
+
+
+  -- // User.associate = function (models) {
+  -- //   // User.belongsTo(models.bookmarkedmovies, {
+  -- //   //   as: "Users",
+  -- //   //   foreignKey: "userid",
+  -- //   // });
+  -- //   // User.belongsToMany(models.movies, {
+  -- //   //   through: models.bookmarkedmovies,
+  -- //   // //   onUpdate: 'CASCADE',
+  -- //   // //   onDelete: 'CASCADE'
+  -- //   // //   foreignKey: "userId",
+  -- //   // //   sourceKey: "userid",
+  -- //   //     // as: 'user1'
+  -- //   // });
+  -- // };
+
+
+
+  --   // bookmarkedSeries.associate = function (models) {
+  --   //   as: "Users",
+  --   //   foreignKey: "userid",
+  --   // });
+  --   // bookmarkedSeries.hasMany(models.series, {
+  --   //   as: "Series",
+  --   //   foreignKey: "seriesid",
+  --   // });
+  -- // };
+
+
+  -- // Movies.belongsToMany(models.users, {
+  --   //   through:models.bookmarkedmovies,
+  --   // //   onUpdate: 'CASCADE',
+  --   // //   onDelete: 'CASCADE'
+  --   //   foreignKey: "moviesid",
+  --   // // //   sourceKey: "id",
+  --   //   as: 'movies'
+  --   // });
+  -- };

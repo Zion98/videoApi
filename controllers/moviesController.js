@@ -10,6 +10,8 @@ const {
   fetchBookmarkedMovies,
   fetchBookmarkedSeries,
 } = require("../services/moviesService");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 
 const createMovie = asyncHandler(async (req, res) => {
   try {
@@ -37,6 +39,8 @@ const createMovie = asyncHandler(async (req, res) => {
         const result = await setMovie(data);
         return successResponse(res, ResponseMsg.SUCCESS.MOVIE_CREATED, result);
       }
+    }else{
+      return errorResponse(res, ResponseMsg.ERROR.INCOMPLETE_DATA, 400);
     }
   } catch (error) {
     return errorResponse(res, error);
@@ -45,8 +49,6 @@ const createMovie = asyncHandler(async (req, res) => {
 
 const getAllMovies = asyncHandler(async (req, res) => {
   try {
-
-
     const userId = req.user;
     const data = {
       userId,
@@ -62,13 +64,13 @@ const getAllMovies = asyncHandler(async (req, res) => {
 const bookmarkMovies = asyncHandler(async (req, res) => {
   try {
     const userId = req.user;
-    const moviesId = req.body.moviesId;
+    const moviesId = req.body.moviesid;
 
     const data = {
       userId,
       moviesId,
     };
-    console.log(data)
+    console.log(data);
     // return;
 
     const result = await setBookmarkedMovies(data);
@@ -122,6 +124,31 @@ const getAllBookmarkedSeries = asyncHandler(async (req, res) => {
   }
 });
 
+const uploadProductImageCloud = async (req, res) => {
+  console.log(req.files);
+  try {
+    console.log("retro");
+    const result = await cloudinary.uploader.upload(
+      req.files.image.tempFilePath,
+      {
+        use_filename: true,
+        folder: "file-upload",
+      }
+    );
+    console.log("logger");
+    // console.log(result);
+    fs.unlinkSync(req.files.image.tempFilePath);
+    const obj = {
+      src: result.secure_url,
+    };
+    return successResponse(res, ResponseMsg.SUCCESS.IMAGE_UPLOAD, obj);
+    // return res.status(200).json({ image: { src: result.secure_url } });
+  } catch (error) {
+    console.log(error);
+    return errorResponse(res, error);
+  }
+};
+
 module.exports = {
   createMovie,
   bookmarkMovies,
@@ -129,4 +156,5 @@ module.exports = {
   getAllSeries,
   getAllBookmarkedMovies,
   getAllBookmarkedSeries,
+  uploadProductImageCloud,
 };

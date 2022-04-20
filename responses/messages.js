@@ -2,6 +2,7 @@ const ResponseMsg = {
   ERROR: {
     UNAUTHORIZED_ACCESS: "Unauthorized access",
     INCOMPLETE_DATA: "Incomplete data",
+    INCOMPLETE_DATAFORM:"Invalid credentials",
     MISSING_FIELD: "Please fill all required fields",
     BAD_PARAMETER: "Invalid parameter Sent",
     EMAIL_EXIST: "Email already registered to a user",
@@ -47,7 +48,8 @@ const ResponseMsg = {
     MOVIES_FETCHED: "All movies successfully fetched",
     BOOKMARKED_MOVIES_FETCHED:"All bookmarked movies successfully fetched",
     SERIES_FETCHED: "All series successfully fetched",
-    MOVIE_UNBOOKMARKED:"This movie has already been bookmarked."
+    MOVIE_UNBOOKMARKED:"This movie has already been bookmarked.",
+    IMAGE_UPLOAD:"Image successfully uploaded"
   },
 };
 

@@ -9,7 +9,7 @@ const { userAuth } = require("../middlewares");
 
 router.post("/", createUser);
 
-router.post("/verify", userAuth, verifyUserT);
+router.get("/verify/:userid/:otp", verifyUserT);
 
 router.post("/login", loginUser);
 
