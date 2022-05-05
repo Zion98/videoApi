@@ -12,10 +12,10 @@ const sendMail = (to, emailSubject, message) => {
   });
 
   var mailOptions = {
-    from: `PennyTree <${process.env.SENDER_MAIL}>`,
+    from: `TyVideos <${process.env.SENDER_MAIL}>`,
     to: `${to}`,
     subject: emailSubject,
-    text: "Pennytree",
+    text: "TyVideos",
     html: `<!DOCTYPE html> <html>
       <head>
         <title></title>
@@ -128,8 +128,8 @@ const sendMail = (to, emailSubject, message) => {
         >
           <div style="text-align: center">
             <img
-              src="https://mypennytree.com/assets/images/logo.png"
-              alt="pennyTag Logo"
+              src=""
+              alt=""
               height="40px"
             />
           </div> 
@@ -137,19 +137,16 @@ const sendMail = (to, emailSubject, message) => {
             ${message}
             
             <p style="margin: 35px 0 0; font-size: 15px">
-            Thank you, and thanks for using PennyTree! <br />
-            <strong>The Penn team</strong>
+            Thanks for using TyVideos! <br />
+            <strong>The Tyers</strong>
           </p>
         </div>
             </div>
-          <p>
-            The privacy and security of your PennyTree account details is important
-            to us.
-          </p>
+       
           <p>
             If you have any questions, please call us at
             <a href="tel:"> (234) XXXX XXX XXXX</a> or email us at
-            <a href="mailto:support@mypennytree.com">support@mypennytree.com.</a>
+            <a href="mailto:support@tyvideos.com">support@tyvideos.com.</a>
           </p>
           <p style="color: #ed0000">
             This is an auto-generated mail. Please do not reply.
@@ -160,7 +157,7 @@ const sendMail = (to, emailSubject, message) => {
           <script>
             document.write(new Date().getFullYear());
           </script>
-          PennyTree. All rights reserved.
+          TyVideos. All rights reserved.
         </p>
       </body>
     </html>`,
@@ -186,7 +183,7 @@ const sendOTP = (to, subject, message) => {
   });
 
   var mailOptions = {
-    from: `PennyTree <${process.env.SENDER_MAIL}>`,
+    from: `TyVideos <${process.env.SENDER_MAIL}>`,
     to: `${to}`,
     subject: subject,
     html: message,
@@ -201,42 +198,3 @@ const sendOTP = (to, subject, message) => {
 };
 
 module.exports = { sendMail, sendOTP };
-
-{
-  /*
-<h2>Hello ${name}</h2>
-<p>
-  We wish to inform you that a transaction occurred on your PennyTree
-  account.
-</p>
-<table style="width: 100%">
-  <tr>
-    <th colspan="2">Transaction Details</th>
-  </tr>
-  <tr>
-    <td>Date/Time</td>
-    <td>${dateTime}</td>
-  </tr>
-  <tr>
-    <td>PennyTag</td>
-    <td>${PennTag}</td>
-  </tr>
-  <tr>
-    <td>Amount</td>
-    <td>${amount}</td>
-  </tr>
-  <tr>
-    <td>Transaction</td>
-    <td>${transaction}</td>
-  </tr>
-  <tr>
-    <td>Reference Number</td>
-    <td>${referenceNumber}</td>
-  </tr>
-  <tr>
-    <td>Remarks</td>
-    <td>${remarks}</td>
-  </tr>
-</table>
-</div> */
-}
